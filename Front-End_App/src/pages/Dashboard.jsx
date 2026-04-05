@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import API from "../config";
 
 function Dashboard() {
   const [invoices, setInvoices] = useState([]);
@@ -11,13 +12,13 @@ function Dashboard() {
 
   useEffect(() => {
     fetchInvoices();
-    axios.get("http://localhost:5000/customers").then((res) => {
+    axios.get(`${API}/customers`).then((res) => {
       setCustomers(res.data);
     });
   }, []);
 
   const fetchInvoices = () => {
-    axios.get("http://localhost:5000/invoices").then((res) => {
+    axios.get(`${API}/invoices`).then((res) => {
       setInvoices(res.data);
     });
   };
@@ -28,7 +29,7 @@ function Dashboard() {
     setSearchResult(null);
     setSearchError("");
     axios
-      .get(`http://localhost:5000/invoices/search/${searchId}`)
+      .get(`${API}/invoices/search/${searchId}`)
       .then((res) => {
         setSearchResult(res.data);
       })
@@ -44,7 +45,7 @@ function Dashboard() {
       fetchInvoices();
     } else {
       axios
-        .get(`http://localhost:5000/invoices/customer/${e.target.value}`)
+        .get(`${API}/invoices/customer/${e.target.value}`)
         .then((res) => {
           setInvoices(res.data);
         });

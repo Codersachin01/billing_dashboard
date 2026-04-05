@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import API from "../config";
 
 function Customers() {
   const [customers, setCustomers] = useState([]);
@@ -11,7 +12,7 @@ function Customers() {
   useEffect(() => { fetchCustomers(); }, []);
 
   const fetchCustomers = () => {
-    axios.get("http://localhost:5000/customers").then((res) => setCustomers(res.data));
+    axios.get(`${API}/customers`).then((res) => setCustomers(res.data));
   };
 
   const handleChange = (e) => {
@@ -20,7 +21,7 @@ function Customers() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:5000/customers", form).then(() => {
+    axios.post(`${API}/customers`, form).then(() => {
       alert("Customer added!");
       fetchCustomers();
       setForm({ cust_id: "", name: "", address: "", pan: "", gst: "", is_active: true });

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import API from "../config";
 
 function Billing() {
   const [customers, setCustomers] = useState([]);
@@ -9,10 +10,10 @@ function Billing() {
   const [invoice, setInvoice] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/customers").then((res) => {
+    axios.get(`${API}/customers`).then((res) => {
       setCustomers(res.data.filter((c) => c.is_active));
     });
-    axios.get("http://localhost:5000/items").then((res) => {
+    axios.get(`${API}/items`).then((res) => {
       setItems(res.data.filter((i) => i.is_active));
     });
   }, []);
@@ -61,7 +62,7 @@ function Billing() {
       })),
     };
 
-    axios.post("http://localhost:5000/invoices", payload).then((res) => {
+    axios.post(`${API}/invoices`, payload).then((res) => {
       setInvoice(res.data);
       setSelectedCustomer("");
       setSelectedItems([]);

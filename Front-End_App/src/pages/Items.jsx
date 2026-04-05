@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import API from "../config";
 
 function Items() {
   const [items, setItems] = useState([]);
@@ -9,14 +10,14 @@ function Items() {
   useEffect(() => { fetchItems(); }, []);
 
   const fetchItems = () => {
-    axios.get("http://localhost:5000/items").then((res) => setItems(res.data));
+    axios.get(`${API}/items`).then((res) => setItems(res.data));
   };
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:5000/items", form).then(() => {
+    axios.post(`${API}/items`, form).then(() => {
       alert("Item added!");
       fetchItems();
       setForm({ item_code: "", name: "", price: "", is_active: true });
