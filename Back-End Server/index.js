@@ -90,7 +90,7 @@ app.post("/invoices", async (req, res) => {
   const { customer_id, items } = req.body;
 
   try { 
-    // get customer to check if gst is register or not
+    // here get customer to check if gst is register or not
     const custResult = await client.query(
       "SELECT * FROM customers WHERE id = $1",
       [customer_id]
@@ -98,7 +98,7 @@ app.post("/invoices", async (req, res) => {
     const customer = custResult.rows[0];
     if (!customer) return res.status(404).send("Customer not found");
 
-    // Calculate subtotal from selected items
+    // here it calculate subtotal from selected items
     let subtotal = 0;
     for (const item of items) {
       const itemResult = await client.query(
@@ -110,26 +110,26 @@ app.post("/invoices", async (req, res) => {
       subtotal += parseFloat(dbItem.price) * item.quantity;
     }
 
-    // GST rule:
-    //    if customer has GST number then GST registered then NO GST charges apply
-    //    if customer has no GST number then NOT registered then 18% GST apply
+    //  GST rules describe below:
+    //    if customer has GST number then GST registered and then NO GST charges apply
+    //    if customer has no GST number then NOT registered and then 18% GST apply
     const gst_applied = !customer.gst;
     const total_amount = gst_applied
       ? parseFloat((subtotal * 1.18).toFixed(2))
       : parseFloat(subtotal.toFixed(2));
 
-    // Auto generate invoice ID - "INVC" + 6 digits = 10 characters
+    // Here auto generate invoice ID ("INVC" + 6 digits which becomes 10 characters)
     const randomNum = Math.floor(100000 + Math.random() * 900000);
     const invoice_id = "INVC" + randomNum;
 
-    // Save invoice
+    // here it save invoice
     const invoiceResult = await client.query(
       "INSERT INTO invoices (invoice_id, customer_id, total_amount, gst_applied) VALUES ($1,$2,$3,$4) RETURNING *",
       [invoice_id, customer_id, total_amount, gst_applied]
     );
     const invoice = invoiceResult.rows[0];
 
-    // Save each item into invoice_items
+    // here it save each item into invoice_items
     for (const item of items) {
       await client.query(
         "INSERT INTO invoice_items (invoice_id, item_id, quantity) VALUES ($1,$2,$3)",
@@ -150,7 +150,7 @@ app.post("/invoices", async (req, res) => {
   }
 });
 
-// GET all invoices (with customer name joined)
+// here it GET all invoices (with customer name joined)
 app.get("/invoices", async (req, res) => {
   try {
     const result = await client.query(
@@ -166,7 +166,7 @@ app.get("/invoices", async (req, res) => {
   }
 });
 
-// GET invoices for a specific customer
+// here it GET invoices for a specific customer
 app.get("/invoices/customer/:customer_id", async (req, res) => {
   try {
     const { customer_id } = req.params;
@@ -185,7 +185,7 @@ app.get("/invoices/customer/:customer_id", async (req, res) => {
   }
 });
 
-// SEARCH invoice by invoice_id string
+// here it SEARCH invoice by invoice_id string
 app.get("/invoices/search/:invoice_id", async (req, res) => {
   try {
     const { invoice_id } = req.params;
