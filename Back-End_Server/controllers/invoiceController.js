@@ -52,14 +52,19 @@ const createInvoice = async (req, res) => {
     const invoice = invoiceResult.rows[0];
 
     // here it save each item into invoice_items
-    for (const item of items) {
-      const unit_price = parseFloat(dbItem.price);
-const line_total = unit_price * item.quantity;
-await client.query(
-  "INSERT INTO invoice_items (invoice_id, item_id, quantity, unit_price, line_total) VALUES ($1,$2,$3,$4,$5)",
-  [invoice.id, item.item_id, item.quantity, unit_price, line_total]
+for (const item of items) {
+  const itemResult = await client.query(
+    "SELECT * FROM items WHERE id = $1",
+    [item.item_id]
   );
-    }
+  const dbItem = itemResult.rows[0];
+  const unit_price = parseFloat(dbItem.price);
+  const line_total = unit_price * item.quantity;
+  await client.query(
+    "INSERT INTO invoice_items (invoice_id, item_id, quantity, unit_price, line_total) VALUES ($1,$2,$3,$4,$5)",
+    [invoice.id, item.item_id, item.quantity, unit_price, line_total]
+  );
+}
 
     res.json({ invoice_id, subtotal, gst_applied, total_amount, message: "Invoice created successfully" });
   } catch (err) {
