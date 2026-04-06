@@ -46,8 +46,8 @@ const createInvoice = async (req, res) => {
 
     // here it save invoice data
     const invoiceResult = await client.query(
-      "INSERT INTO invoices (invoice_id, customer_id, total_amount, gst_applied) VALUES ($1,$2,$3,$4) RETURNING *",
-      [invoice_id, customer_id, total_amount, gst_applied]
+  "INSERT INTO invoices (invoice_id, customer_id, subtotal, total_amount, gst_applied) VALUES ($1,$2,$3,$4,$5) RETURNING *",
+[invoice_id, customer_id, subtotal, total_amount, gst_applied]
     );
     const invoice = invoiceResult.rows[0];
 
